@@ -1,0 +1,474 @@
+@page "/"
+@using WeatherTraveler.Web.Services
+@inject IWeatherTravelerService WeatherService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>🌤️ Weather Traveler</PageTitle>
+
+<div class="container-fluid main-container">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                🌤️ Weather Traveler
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#weather">Weather</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#routing">Route Planning</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#preferences">Preferences</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-4 mb-3">🌤️ Smart Weather-Based Travel Planning</h1>
+                <p class="lead">Plan your perfect trip with real-time weather insights and intelligent route optimization</p>
+            </div>
+        </div>
+
+        <!-- Weather Dashboard -->
+        <section id="weather" class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">🌍 Current Weather Conditions</h2>
+                </div>
+            </div>
+            
+            @if (isLoadingWeather)
+            {
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading weather data...</span>
+                        </div>
+                        <p class="mt-2">Fetching current weather conditions...</p>
+                    </div>
+                </div>
+            }
+            else if (weatherLocations.Any())
+            {
+                <div class="row">
+                    @foreach (var location in weatherLocations)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="weather-card fade-in">
+                                <div class="text-center">
+                                    <div class="weather-icon-large">@GetWeatherIcon(location.Weather?.Condition)</div>
+                                    <h5>@location.Name</h5>
+                                    @if (location.Weather != null)
+                                    {
+                                        <div class="temperature">@location.Weather.Temperature.ToString("F1")°C</div>
+                                        <div class="weather-condition">@location.Weather.Condition</div>
+                                        <div class="small text-muted">
+                                            <div>💨 Wind: @location.Weather.WindSpeed.ToString("F1") km/h</div>
+                                            <div>💧 Humidity: @location.Weather.Humidity%</div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="badge @GetTemperatureStatusClass(location.Weather.Temperature)">
+                                                @GetTemperatureStatus(location.Weather.Temperature)
+                                            </span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted">Weather data unavailable</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+
+        <!-- Route Planning -->
+        <section id="routing" class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">🗺️ Route Planning</h2>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="route-card">
+                        <div class="route-header">
+                            <span class="route-icon">📍</span>
+                            <h5 class="mb-0">Sample Route: Denver → Las Vegas → Los Angeles</h5>
+                        </div>
+                        
+                        @if (routeInfo != null)
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Denver → Las Vegas:</span>
+                                        <span class="distance-badge">@routeInfo.DenverToVegas.ToString("F0") km</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Las Vegas → Los Angeles:</span>
+                                        <span class="distance-badge">@routeInfo.VegasToLA.ToString("F0") km</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong>Total Distance:</strong>
+                                        <span class="distance-badge">@routeInfo.TotalDistance.ToString("F0") km</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Weather Suitability Analysis</h6>
+                                    <div class="small">
+                                        @if (routeWeatherAnalysis != null)
+                                        {
+                                            <div>✅ Locations in ideal range: @routeWeatherAnalysis.OptimalLocations</div>
+                                            <div>⚠️ Acceptable conditions: @routeWeatherAnalysis.AcceptableLocations</div>
+                                            <div>❌ Outside preferences: @routeWeatherAnalysis.OutsideRangeLocations</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-primary-custom me-2" @onclick="PlanNewRoute">
+                                🎯 Plan New Route
+                            </button>
+                            <button class="btn btn-outline-primary" @onclick="ExportRoute">
+                                📁 Export to Google Earth
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="weather-card">
+                        <h6>⛽ Gas Price Information</h6>
+                        @if (gasStations.Any())
+                        {
+                            @foreach (var station in gasStations.Take(3))
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <div class="fw-bold">@station.StationName</div>
+                                        <div class="small text-muted">@station.Distance.ToString("F1") km away</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fw-bold text-success">$@station.Price.ToString("F2")</div>
+                                        <div class="small">per gallon</div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">Loading gas prices...</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Preferences -->
+        <section id="preferences" class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">⚙️ Travel Preferences</h2>
+                </div>
+            </div>
+            
+            <div class="preferences-panel">
+                @if (userProfile != null)
+                {
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5>👤 User Profile</h5>
+                            <div class="preference-item">
+                                <span class="preference-label">Name:</span>
+                                <span>@userProfile.Name</span>
+                            </div>
+                            <div class="preference-item">
+                                <span class="preference-label">Member Since:</span>
+                                <span>@userProfile.CreatedDate.ToString("MMM dd, yyyy")</span>
+                            </div>
+                            <div class="preference-item">
+                                <span class="preference-label">Last Active:</span>
+                                <span>@userProfile.LastUpdated.ToString("MMM dd, yyyy")</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <h5>🎯 Travel Settings</h5>
+                            <div class="preference-item">
+                                <span class="preference-label">Temperature Range:</span>
+                                <span>@userProfile.Preferences.TemperatureRange.MinCelsius°C - @userProfile.Preferences.TemperatureRange.MaxCelsius°C</span>
+                            </div>
+                            <div class="preference-item">
+                                <span class="preference-label">Avoid Rain:</span>
+                                <span>@(userProfile.Preferences.AvoidRain ? "Yes" : "No")</span>
+                            </div>
+                            <div class="preference-item">
+                                <span class="preference-label">Max Driving Hours:</span>
+                                <span>@userProfile.Preferences.MaxDrivingHours hours/day</span>
+                            </div>
+                            <div class="preference-item">
+                                <span class="preference-label">Preferred Departure:</span>
+                                <span>@userProfile.Preferences.PreferredDepartureTime.ToString(@"hh\:mm")</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary-custom" @onclick="EditPreferences">
+                            ✏️ Edit Preferences
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading preferences...</span>
+                        </div>
+                        <p class="mt-2">Loading your travel preferences...</p>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-4 border-top">
+            <p class="text-muted">🌤️ Weather Traveler - Smart weather-aware travel planning • Built with F# and Blazor</p>
+        </footer>
+    </div>
+</div>
+
+@code {
+    private bool isLoadingWeather = true;
+    private List<WeatherLocation> weatherLocations = new();
+    private RouteInfo? routeInfo;
+    private RouteWeatherAnalysis? routeWeatherAnalysis;
+    private UserProfile? userProfile;
+    private List<GasStationInfo> gasStations = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllData();
+    }
+
+    private async Task LoadAllData()
+    {
+        // Load weather data for major cities
+        await LoadWeatherData();
+        
+        // Load route information
+        await LoadRouteData();
+        
+        // Load user preferences
+        await LoadUserPreferences();
+        
+        // Load gas station data
+        await LoadGasStations();
+    }
+
+    private async Task LoadWeatherData()
+    {
+        isLoadingWeather = true;
+        var locations = new[]
+        {
+            new { Name = "Denver, CO", Coordinate = new Coordinate(39.7392, -104.9903) },
+            new { Name = "Las Vegas, NV", Coordinate = new Coordinate(36.1699, -115.1398) },
+            new { Name = "Los Angeles, CA", Coordinate = new Coordinate(34.0522, -118.2437) }
+        };
+
+        weatherLocations.Clear();
+        
+        foreach (var location in locations)
+        {
+            var weather = await WeatherService.GetCurrentWeatherAsync(location.Coordinate);
+            weatherLocations.Add(new WeatherLocation
+            {
+                Name = location.Name,
+                Coordinate = location.Coordinate,
+                Weather = weather
+            });
+        }
+        
+        isLoadingWeather = false;
+        StateHasChanged();
+    }
+
+    private async Task LoadRouteData()
+    {
+        var denverCoord = new Coordinate(39.7392, -104.9903);
+        var vegasCoord = new Coordinate(36.1699, -115.1398);
+        var laCoord = new Coordinate(34.0522, -118.2437);
+
+        var denverToVegas = await WeatherService.CalculateDistanceAsync(denverCoord, vegasCoord);
+        var vegasToLA = await WeatherService.CalculateDistanceAsync(vegasCoord, laCoord);
+
+        routeInfo = new RouteInfo
+        {
+            DenverToVegas = denverToVegas,
+            VegasToLA = vegasToLA,
+            TotalDistance = denverToVegas + vegasToLA
+        };
+
+        // Analyze weather for route
+        AnalyzeRouteWeather();
+    }
+
+    private async Task LoadUserPreferences()
+    {
+        userProfile = await WeatherService.LoadUserProfileAsync();
+        StateHasChanged();
+    }
+
+    private async Task LoadGasStations()
+    {
+        var denverCoord = new Coordinate(39.7392, -104.9903);
+        var stations = await WeatherService.GetGasPricesAsync(denverCoord, 25.0);
+        gasStations = stations.ToList();
+        StateHasChanged();
+    }
+
+    private void AnalyzeRouteWeather()
+    {
+        if (!weatherLocations.Any() || userProfile == null) return;
+
+        var tempRange = userProfile.Preferences.TemperatureRange;
+        var optimal = 0;
+        var acceptable = 0;
+        var outsideRange = 0;
+
+        foreach (var location in weatherLocations)
+        {
+            if (location.Weather == null) continue;
+
+            var temp = location.Weather.Temperature;
+            if (temp >= tempRange.MinCelsius && temp <= tempRange.MaxCelsius)
+            {
+                optimal++;
+            }
+            else if (temp >= tempRange.MinCelsius - 5 && temp <= tempRange.MaxCelsius + 5)
+            {
+                acceptable++;
+            }
+            else
+            {
+                outsideRange++;
+            }
+        }
+
+        routeWeatherAnalysis = new RouteWeatherAnalysis
+        {
+            OptimalLocations = optimal,
+            AcceptableLocations = acceptable,
+            OutsideRangeLocations = outsideRange
+        };
+    }
+
+    private string GetWeatherIcon(WeatherCondition? condition)
+    {
+        return condition switch
+        {
+            WeatherCondition.Sunny => "☀️",
+            WeatherCondition.PartlyCloudy => "⛅",
+            WeatherCondition.Cloudy => "☁️",
+            WeatherCondition.Rainy => "🌧️",
+            WeatherCondition.Stormy => "⛈️",
+            WeatherCondition.Snowy => "❄️",
+            WeatherCondition.Foggy => "🌫️",
+            _ => "🌤️"
+        };
+    }
+
+    private string GetTemperatureStatusClass(double temperature)
+    {
+        if (userProfile == null) return "bg-secondary";
+
+        var range = userProfile.Preferences.TemperatureRange;
+        if (temperature >= range.MinCelsius && temperature <= range.MaxCelsius)
+            return "bg-success";
+        else if (temperature >= range.MinCelsius - 5 && temperature <= range.MaxCelsius + 5)
+            return "bg-warning";
+        else
+            return "bg-danger";
+    }
+
+    private string GetTemperatureStatus(double temperature)
+    {
+        if (userProfile == null) return "Unknown";
+
+        var range = userProfile.Preferences.TemperatureRange;
+        if (temperature >= range.MinCelsius && temperature <= range.MaxCelsius)
+            return "Optimal";
+        else if (temperature >= range.MinCelsius - 5 && temperature <= range.MaxCelsius + 5)        return "Acceptable";
+        else
+            return "Outside Range";
+    }
+      private async Task PlanNewRoute()
+    {
+        // Navigate to the route planner page
+        await Task.Delay(1); // Suppress async warning
+        Navigation.NavigateTo("/route-planner");
+    }
+
+    private async Task ExportRoute()
+    {
+        var waypoints = new List<Coordinate>
+        {
+            new(39.7392, -104.9903), // Denver
+            new(36.1699, -115.1398), // Las Vegas
+            new(34.0522, -118.2437)  // Los Angeles
+        };
+
+        var kml = await WeatherService.ExportRouteToKmlAsync(waypoints);
+          if (!string.IsNullOrEmpty(kml))        {
+            // TODO: Trigger download of KML file
+            await Task.Delay(100);
+        }
+    }
+      private async Task EditPreferences()
+    {
+        // Navigate to the preferences page
+        await Task.Delay(1); // Suppress async warning
+        Navigation.NavigateTo("/preferences");
+    }
+
+    // Helper classes
+    public class WeatherLocation
+    {
+        public string Name { get; set; } = string.Empty;
+        public required Coordinate Coordinate { get; set; }
+        public WeatherInfo? Weather { get; set; }
+    }
+
+    public class RouteInfo
+    {
+        public double DenverToVegas { get; set; }
+        public double VegasToLA { get; set; }
+        public double TotalDistance { get; set; }
+    }
+
+    public class RouteWeatherAnalysis
+    {
+        public int OptimalLocations { get; set; }
+        public int AcceptableLocations { get; set; }
+        public int OutsideRangeLocations { get; set; }
+    }
+}

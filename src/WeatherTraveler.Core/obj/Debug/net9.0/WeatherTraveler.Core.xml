@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>WeatherTraveler.Core</name></assembly>
+<members>
+<member name="T:WeatherTraveler.Types.PlanningResult">
+<summary>
+ Planning result
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.TravelPlanRequest">
+<summary>
+ Travel planning request
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.GasPriceInfo">
+<summary>
+ Gas price information
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.TravelRoute">
+<summary>
+ Complete travel route
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.RouteSegment">
+<summary>
+ Route segment between two locations
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.TravelLocation">
+<summary>
+ Location with travel preferences
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.HistoricalWeather">
+<summary>
+ Historical weather data point
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.WeatherInfo">
+<summary>
+ Current weather information
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.WeatherCondition">
+<summary>
+ Weather condition types
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.TemperatureRange">
+<summary>
+ Temperature range specification
+</summary>
+</member>
+<member name="T:WeatherTraveler.Types.Coordinate">
+<summary>
+ Geographic coordinate
+</summary>
+</member>
+<member name="T:WeatherTraveler.Configuration.AppConfig">
+<summary>
+ Main application configuration
+</summary>
+</member>
+<member name="T:WeatherTraveler.Configuration.AppSettings">
+<summary>
+ Application settings
+</summary>
+</member>
+<member name="T:WeatherTraveler.Configuration.UserPreferences">
+<summary>
+ User travel preferences
+</summary>
+</member>
+<member name="T:WeatherTraveler.Configuration.GasPriceConfig">
+<summary>
+ Configuration for gas price services
+</summary>
+</member>
+<member name="T:WeatherTraveler.Configuration.MappingConfig">
+<summary>
+ Configuration for mapping and routing services
+</summary>
+</member>
+<member name="T:WeatherTraveler.Configuration.WeatherApiConfig">
+<summary>
+ Configuration for weather API services
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.printConfigSummary(WeatherTraveler.Configuration.AppConfig)">
+<summary>
+ Print configuration summary
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.exportConfig(WeatherTraveler.Configuration.AppConfig,System.String)">
+<summary>
+ Export configuration to file (for backup/sharing)
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.initializeDirectories(WeatherTraveler.Configuration.AppConfig)">
+<summary>
+ Create necessary directories
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.validateConfig(WeatherTraveler.Configuration.AppConfig)">
+<summary>
+ Validate configuration
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.updateMappingApiKey(WeatherTraveler.Configuration.AppConfig,System.String)">
+<summary>
+ Update mapping API key
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.updateWeatherApiKey(WeatherTraveler.Configuration.AppConfig,System.String,System.String)">
+<summary>
+ Update API key for weather service
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.updateUserPreferences(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update user preferences
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.saveConfig(WeatherTraveler.Configuration.AppConfig)">
+<summary>
+ Save configuration to file
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.loadConfig">
+<summary>
+ Load configuration from file or create default
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.getConfigFilePath">
+<summary>
+ Configuration file path
+</summary>
+</member>
+<member name="M:WeatherTraveler.Configuration.createDefaultConfig">
+<summary>
+ Create default application configuration
+</summary>
+</member>
+<member name="P:WeatherTraveler.Configuration.defaultWeatherConfig">
+<summary>
+ Default configuration values
+</summary>
+</member>
+<member name="T:WeatherTraveler.CacheService.CacheCategory">
+<summary>
+ Cache categories
+</summary>
+</member>
+<member name="T:WeatherTraveler.CacheService.CacheEntry`1">
+<summary>
+ Cache entry with expiration
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.clearAllCache(WeatherTraveler.Configuration.AppConfig)">
+<summary>
+ Clear all cache data
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.getCacheStats(WeatherTraveler.Configuration.AppConfig)">
+<summary>
+ Get cache statistics
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.cleanupExpiredCache(WeatherTraveler.Configuration.AppConfig)">
+<summary>
+ Clear expired cache entries
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.getCachedGasPriceData(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate,System.Double)">
+<summary>
+ Retrieve gas price data from cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.cacheGasPriceData(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate,System.Double,Microsoft.FSharp.Collections.FSharpList{System.Object})">
+<summary>
+ Store gas price data in cache  
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.getCachedRouteData(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate,WeatherTraveler.Types.Coordinate)">
+<summary>
+ Retrieve route data from cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.cacheRouteData(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate,WeatherTraveler.Types.Coordinate,WeatherTraveler.Types.RouteSegment)">
+<summary>
+ Store route data in cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.getCachedWeatherData(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate,System.String)">
+<summary>
+ Retrieve weather data from cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.cacheWeatherData(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate,System.String,Microsoft.FSharp.Collections.FSharpList{WeatherTraveler.Types.WeatherInfo})">
+<summary>
+ Store weather data in cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.getFromFile``1(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.CacheService.CacheCategory,System.String)">
+<summary>
+ Retrieve data from file cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.storeInFile``1(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.CacheService.CacheCategory,System.String,``0,System.Int32)">
+<summary>
+ Store data in file cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.getFromMemory``1(System.String)">
+<summary>
+ Retrieve data from memory cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.storeInMemory``1(System.String,``0,System.Int32)">
+<summary>
+ Store data in memory cache
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.isValidCacheEntry``1(WeatherTraveler.CacheService.CacheEntry{``0})">
+<summary>
+ Check if cache entry is valid
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.createCacheEntry``1(``0,System.Int32)">
+<summary>
+ Create cache entry
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.getCacheFilePath(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.CacheService.CacheCategory,System.String)">
+<summary>
+ Get cache file path
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.gasPriceCacheKey(WeatherTraveler.Types.Coordinate,System.Double)">
+<summary>
+ Generate cache key for gas price data
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.routeCacheKey(WeatherTraveler.Types.Coordinate,WeatherTraveler.Types.Coordinate)">
+<summary>
+ Generate cache key for route data
+</summary>
+</member>
+<member name="M:WeatherTraveler.CacheService.weatherCacheKey(WeatherTraveler.Types.Coordinate,System.String)">
+<summary>
+ Generate cache key for weather data
+</summary>
+</member>
+<member name="P:WeatherTraveler.CacheService.memoryCache">
+<summary>
+ In-memory cache storage
+</summary>
+</member>
+<member name="T:WeatherTraveler.PreferencesService.PreferenceOption">
+<summary>
+ Preference modification options
+</summary>
+</member>
+<member name="T:WeatherTraveler.PreferencesService.NotificationSettings">
+<summary>
+ Notification preferences
+</summary>
+</member>
+<member name="T:WeatherTraveler.PreferencesService.UserProfile">
+<summary>
+ User profile with comprehensive preferences
+</summary>
+</member>
+<member name="T:WeatherTraveler.PreferencesService.RouteTemplate">
+<summary>
+ Saved route template
+</summary>
+</member>
+<member name="T:WeatherTraveler.PreferencesService.TravelPatterns">
+<summary>
+ User travel patterns and analytics
+</summary>
+</member>
+<member name="T:WeatherTraveler.PreferencesService.TravelHistoryEntry">
+<summary>
+ Travel history entry
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getPreferenceSummary(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Get preference summary as string
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.validatePreferences(WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Preference validation functions
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.deleteTemperatureRange(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Delete specific preference categories (reset to default)
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.quickUpdateTemperatureRange(WeatherTraveler.PreferencesService.UserProfile,System.Double,System.Double)">
+<summary>
+ Quick preference update functions for specific common operations
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.manageUserPreferences(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Interactive preference management system (simplified - use individual functions)
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.resetPreferencesToDefaults(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Reset preferences to defaults
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updateNotificationSettings(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Update notification settings
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updatePriorityWeights(WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update priority weights
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updateFuelPreferences(WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update fuel and gas station preferences
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updateMaxDrivingHours(WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update maximum driving hours preference
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updateDepartureTime(WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update departure time preference
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updateRainAvoidance(WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update rain avoidance preference
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updateTemperatureRange(WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update temperature range preference
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getBoolInput(System.String)">
+<summary>
+ Get boolean input
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getIntInput(System.String,Microsoft.FSharp.Core.FSharpOption{System.Int32},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+<summary>
+ Get integer input with validation
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getFloatInput(System.String,Microsoft.FSharp.Core.FSharpOption{System.Double},Microsoft.FSharp.Core.FSharpOption{System.Double})">
+<summary>
+ Get float input with validation
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getUserInput(System.String,Microsoft.FSharp.Core.FSharpFunc{System.String,System.Boolean},System.String)">
+<summary>
+ Get user input with validation
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.displayPreferenceMenu">
+<summary>
+ Display preference management menu
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.createRouteTemplateFromTrip(WeatherTraveler.PreferencesService.UserProfile,System.String,Microsoft.FSharp.Core.FSharpOption{System.String},Microsoft.FSharp.Collections.FSharpList{WeatherTraveler.Types.TravelLocation})">
+<summary>
+ Create route template from current preferences
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.printProfileSummary(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Print user profile summary
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.importUserData(System.String)">
+<summary>
+ Import user data from backup
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.exportUserData(WeatherTraveler.PreferencesService.UserProfile,System.String)">
+<summary>
+ Export user data for backup
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getPersonalizedRecommendations(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Get personalized recommendations based on patterns
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updateTravelPatterns(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Update travel patterns in profile
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.analyzeTravelPatterns(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Analyze travel patterns
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.deleteRouteTemplate(WeatherTraveler.PreferencesService.UserProfile,System.Guid)">
+<summary>
+ Delete route template
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getRouteTemplate(WeatherTraveler.PreferencesService.UserProfile,System.Guid)">
+<summary>
+ Get route template by ID
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.saveRouteTemplate(WeatherTraveler.PreferencesService.UserProfile,WeatherTraveler.PreferencesService.RouteTemplate)">
+<summary>
+ Save route template
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.addTravelHistory(WeatherTraveler.PreferencesService.UserProfile,WeatherTraveler.PreferencesService.TravelHistoryEntry)">
+<summary>
+ Add travel history entry
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.updatePreferences(WeatherTraveler.PreferencesService.UserProfile,WeatherTraveler.Configuration.UserPreferences)">
+<summary>
+ Update user preferences
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.saveUserProfile(WeatherTraveler.PreferencesService.UserProfile)">
+<summary>
+ Save user profile
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.loadUserProfile">
+<summary>
+ Load user profile
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.createDefaultProfile">
+<summary>
+ Create default user profile
+</summary>
+</member>
+<member name="P:WeatherTraveler.PreferencesService.defaultUserPreferences">
+<summary>
+ Default user preferences
+</summary>
+</member>
+<member name="P:WeatherTraveler.PreferencesService.defaultNotificationSettings">
+<summary>
+ Default notification settings
+</summary>
+</member>
+<member name="M:WeatherTraveler.PreferencesService.getUserProfilePath">
+<summary>
+ Get user profile file path
+</summary>
+</member>
+<member name="M:WeatherTraveler.LocationService.findNearbyMajorCities(WeatherTraveler.Types.Coordinate,System.Double)">
+<summary>
+ Find cities within a radius of a coordinate
+</summary>
+</member>
+<member name="M:WeatherTraveler.LocationService.getRouteInfo(WeatherTraveler.Types.Coordinate,WeatherTraveler.Types.Coordinate)">
+<summary>
+ Get route information between two points
+</summary>
+</member>
+<member name="M:WeatherTraveler.LocationService.geocodeLocation(System.String)">
+<summary>
+ Geocode a location name to coordinates (mock implementation)
+</summary>
+</member>
+<member name="M:WeatherTraveler.LocationService.getCurrentLocation">
+<summary>
+ Get current location (mock implementation)
+</summary>
+</member>
+<member name="M:WeatherTraveler.LocationService.calculateDistance(WeatherTraveler.Types.Coordinate,WeatherTraveler.Types.Coordinate)">
+<summary>
+ Calculate distance between two coordinates using Haversine formula
+</summary>
+</member>
+<member name="P:WeatherTraveler.LocationService.usMajorCities">
+<summary>
+ Major US cities with coordinates for quick reference
+</summary>
+</member>
+<member name="T:WeatherTraveler.WeatherService.ForecastGranularity">
+<summary>
+ Granular forecasting configuration based on time proximity
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getCurrentWeatherCompat(WeatherTraveler.Types.Coordinate)">
+<summary>
+ Compatibility function for RouteService (uses default config)  
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getWeatherForecastCompat(WeatherTraveler.Types.Coordinate)">
+<summary>
+ Compatibility function for RouteService (uses default config)
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.analyzeForecastReliability(WeatherTraveler.Types.Coordinate,System.DateTime)">
+<summary>
+ Analyze forecast reliability and suggest update timing
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getForecastConfidence(System.Double)">
+<summary>
+ Get forecast confidence based on time proximity and granularity
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getGranularWeatherForecast(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate,System.DateTime)">
+<summary>
+ Enhanced granular weather forecast with variable detail levels
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getForecastGranularity(System.Double)">
+<summary>
+ Get forecast granularity based on time until travel
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.findBestWeatherWindow(Microsoft.FSharp.Collections.FSharpList{WeatherTraveler.Types.WeatherInfo},WeatherTraveler.Types.TemperatureRange,System.Int32)">
+<summary>
+ Find best weather window in forecast
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getRouteSummary(Microsoft.FSharp.Collections.FSharpList{WeatherTraveler.Types.WeatherInfo})">
+<summary>
+ Get weather summary for a route
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.filterByWeatherConditions(Microsoft.FSharp.Collections.FSharpList{WeatherTraveler.Types.WeatherInfo},WeatherTraveler.Types.TemperatureRange,System.Boolean)">
+<summary>
+ Filter locations by weather conditions
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.meetsTemperatureRange(WeatherTraveler.Types.WeatherInfo,WeatherTraveler.Types.TemperatureRange)">
+<summary>
+ Check if weather meets temperature requirements
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getHistoricalWeather(WeatherTraveler.Types.Coordinate,System.DateTime,System.DateTime)">
+<summary>
+ Get historical weather data (mock implementation)
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getWeatherForecast(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate)">
+<summary>
+ Get 5-day weather forecast with enhanced mock implementation
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.getCurrentWeather(WeatherTraveler.Configuration.AppConfig,WeatherTraveler.Types.Coordinate)">
+<summary>
+ Get current weather for a location with configuration and caching
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.generateMockWeather(WeatherTraveler.Types.Coordinate)">
+<summary>
+ Generate realistic mock weather based on location and season
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.fetchRealWeatherFromApi(WeatherTraveler.Types.Coordinate,System.String)">
+<summary>
+ Get current weather from OpenWeatherMap API
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.parseWeatherCondition(System.String)">
+<summary>
+ Parse weather condition from API response
+</summary>
+</member>
+<member name="M:WeatherTraveler.WeatherService.kelvinToCelsius(System.Double)">
+<summary>
+ Convert Kelvin to Celsius
+</summary>
+</member>
+<member name="T:WeatherTraveler.RouteService.RouteResult">
+<summary>
+ Route planning result
+</summary>
+</member>
+<member name="T:WeatherTraveler.RouteService.TravelRoute">
+<summary>
+ Complete travel route
+</summary>
+</member>
+<member name="T:WeatherTraveler.RouteService.RouteSegment">
+<summary>
+ Route segment between two points
+</summary>
+</member>
+<member name="T:WeatherTraveler.RouteService.TravelPlanRequest">
+<summary>
+ Travel request with preferences
+</summary>
+</member>
+<member name="T:WeatherTraveler.RouteService.RouteOptimization">
+<summary>
+ Route optimization preferences
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.planRoute(WeatherTraveler.Types.TravelPlanRequest)">
+<summary>
+ Bridge function to convert between Types.fs and RouteService.fs type systems
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.analyzeRouteFeasibility(WeatherTraveler.RouteService.TravelPlanRequest)">
+<summary>
+ Analyze route feasibility considering constraints
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.generateAlternativeRoutes(WeatherTraveler.RouteService.TravelPlanRequest)">
+<summary>
+ Generate alternative routes with different optimizations
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.createTravelSchedule(WeatherTraveler.RouteService.TravelRoute,WeatherTraveler.RouteService.TravelPlanRequest)">
+<summary>
+ Create a daily travel schedule respecting daily driving limits
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.planOptimalRoute(WeatherTraveler.RouteService.TravelPlanRequest)">
+<summary>
+ Plan optimal route with weather considerations
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.findOptimalDepartureTime(WeatherTraveler.RouteService.RouteSegment,WeatherTraveler.RouteService.TravelPlanRequest)">
+<summary>
+ Find the best weather window for a route segment
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.createRouteSegment(System.String,WeatherTraveler.Types.Coordinate,System.String,WeatherTraveler.Types.Coordinate,WeatherTraveler.RouteService.TravelPlanRequest)">
+<summary>
+ Create a route segment between two locations
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.rateWeatherForTravel(WeatherTraveler.Types.WeatherInfo,WeatherTraveler.RouteService.TravelPlanRequest)">
+<summary>
+ Rate weather conditions on 0-10 scale for travel
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.calculateDrivingTime(System.Double)">
+<summary>
+ Calculate driving time considering traffic and road types
+</summary>
+</member>
+<member name="M:WeatherTraveler.RouteService.calculateFuelCost(System.Double)">
+<summary>
+ Calculate fuel cost for distance
+</summary>
+</member>
+<member name="T:WeatherTraveler.ExportService.CsvExportOptions">
+<summary>
+ CSV export options  
+</summary>
+</member>
+<member name="T:WeatherTraveler.ExportService.KmlExportOptions">
+<summary>
+ KML export options
+</summary>
+</member>
+<member name="M:WeatherTraveler.ExportService.exportRouteSummary(WeatherTraveler.Types.TravelRoute,Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.DateTime,WeatherTraveler.Types.RouteSegment}},Microsoft.FSharp.Collections.FSharpList{System.String},System.String)">
+<summary>
+ Export route summary to text file
+</summary>
+</member>
+<member name="M:WeatherTraveler.ExportService.generateRouteSummaryReport(WeatherTraveler.Types.TravelRoute,Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.DateTime,WeatherTraveler.Types.RouteSegment}},Microsoft.FSharp.Collections.FSharpList{System.String})">
+<summary>
+ Generate route summary report
+</summary>
+</member>
+<member name="M:WeatherTraveler.ExportService.exportToCSV(WeatherTraveler.Types.TravelRoute,Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.DateTime,WeatherTraveler.Types.RouteSegment}},System.String,Microsoft.FSharp.Core.FSharpOption{WeatherTraveler.ExportService.CsvExportOptions})">
+<summary>
+ Export route to CSV file
+</summary>
+</member>
+<member name="M:WeatherTraveler.ExportService.generateCSV(WeatherTraveler.Types.TravelRoute,Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.DateTime,WeatherTraveler.Types.RouteSegment}},WeatherTraveler.ExportService.CsvExportOptions)">
+<summary>
+ Generate CSV data for route export
+</summary>
+</member>
+<member name="M:WeatherTraveler.ExportService.exportToKML(WeatherTraveler.Types.TravelRoute,System.String,System.String,Microsoft.FSharp.Core.FSharpOption{WeatherTraveler.ExportService.KmlExportOptions})">
+<summary>
+ Export route to KML file
+</summary>
+</member>
+<member name="M:WeatherTraveler.ExportService.generateKML(WeatherTraveler.Types.TravelRoute,System.String,WeatherTraveler.ExportService.KmlExportOptions)">
+<summary>
+ Generate KML for Google Earth export
+</summary>
+</member>
+<member name="P:WeatherTraveler.ExportService.defaultCsvOptions">
+<summary>
+ Default CSV export options
+</summary>
+</member>
+<member name="P:WeatherTraveler.ExportService.defaultKmlOptions">
+<summary>
+ Default KML export options
+</summary>
+</member>
+<member name="T:WeatherTraveler.GasPriceService.GasPriceSearchOptions">
+<summary>
+ Gas price search options
+</summary>
+</member>
+<member name="T:WeatherTraveler.GasPriceService.GasStation">
+<summary>
+ Gas station information
+</summary>
+</member>
+<member name="M:WeatherTraveler.GasPriceService.predictBestFuelUpTimes(WeatherTraveler.Types.TravelRoute)">
+<summary>
+ Predict best time to fuel up based on price trends
+</summary>
+</member>
+<member name="M:WeatherTraveler.GasPriceService.getFuelPriceTrends(WeatherTraveler.Types.Coordinate,System.Int32)">
+<summary>
+ Get fuel price trends (mock implementation)
+</summary>
+</member>
+<member name="M:WeatherTraveler.GasPriceService.estimateDailyFuelBudget(WeatherTraveler.Types.TravelRoute,System.Int32,System.Double)">
+<summary>
+ Estimate daily fuel budget for trip
+</summary>
+</member>
+<member name="M:WeatherTraveler.GasPriceService.findCheapestStationsAlongRoute(WeatherTraveler.Types.TravelRoute,System.Double)">
+<summary>
+ Find cheapest gas stations along route
+</summary>
+</member>
+<member name="M:WeatherTraveler.GasPriceService.calculateFuelCost(WeatherTraveler.Types.TravelRoute,System.Double)">
+<summary>
+ Calculate fuel cost for a route
+</summary>
+</member>
+<member name="M:WeatherTraveler.GasPriceService.getGasPricesNearLocation(WeatherTraveler.Types.Coordinate,WeatherTraveler.GasPriceService.GasPriceSearchOptions)">
+<summary>
+ Get gas prices near a location (enhanced mock implementation)
+</summary>
+</member>
+<member name="M:WeatherTraveler.GasPriceService.generateMockGasStation(WeatherTraveler.Types.Coordinate,System.Double,System.Double,System.String,System.String)">
+<summary>
+ Generate realistic mock gas station data
+</summary>
+</member>
+<member name="P:WeatherTraveler.GasPriceService.defaultSearchOptions">
+<summary>
+ Default search options
+</summary>
+</member>
+</members>
+</doc>

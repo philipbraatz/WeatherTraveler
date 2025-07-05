@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Download Test</title>
+</head>
+<body>
+    <h1>Download Function Test</h1>
+    <button onclick="testDownload()">Test Download KML</button>
+    
+    <script>
+        window.downloadFile = function (filename, content, contentType) {
+            console.log('downloadFile called with:', { filename, contentLength: content?.length, contentType });
+            try {
+                const blob = new Blob([content], { type: contentType });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                console.log('Download triggered successfully');
+            } catch (error) {
+                console.error('Error in downloadFile:', error);
+            }
+        };
+        
+        function testDownload() {
+            const kml = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Test Route</name>
+    <Placemark>
+      <name>Test Point</name>
+      <Point>
+        <coordinates>-122.4194,37.7749,0</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>`;
+            
+            downloadFile('test-route.kml', kml, 'application/vnd.google-earth.kml+xml');
+        }
+    </script>
+</body>
+</html>

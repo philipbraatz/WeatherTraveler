@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="Configuration.fs" />
+    <Compile Include="CacheService.fs" />
+    <Compile Include="PreferencesService.fs" />
+    <Compile Include="LocationService.fs" />
+    <Compile Include="WeatherService.fs" />
+    <Compile Include="RouteService.fs" />
+    <Compile Include="ExportService.fs" />
+    <Compile Include="GasPriceService.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Data" Version="6.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>

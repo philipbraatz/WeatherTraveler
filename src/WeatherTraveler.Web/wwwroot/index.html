@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌤️ Weather Traveler</title>
+    <base href="/" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <HeadOutlet />
+</head>
+
+<body>
+    <div id="app">
+        <div class="loading-screen">
+            <div class="loading-container">
+                <div class="weather-icon">🌤️</div>
+                <h2>Weather Traveler</h2>
+                <p>Loading your weather-aware travel planning experience...</p>
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        // Test function to verify JavaScript interop is working
+        window.testJavaScriptInterop = function() {
+            console.log('JavaScript interop test function called successfully!');
+            return 'JavaScript interop is working';
+        };        // Enhanced downloadFile function with comprehensive debugging
+        window.downloadFile = function (filename, content, contentType) {
+            console.log('=== downloadFile function called ===');
+            console.log('Function arguments:', { 
+                filename: filename, 
+                contentLength: content?.length, 
+                contentType: contentType,
+                contentPreview: content?.substring(0, 100) + '...'
+            });
+            
+            try {
+                if (!filename || !content) {
+                    console.error('downloadFile: Missing filename or content');
+                    return false;
+                }
+                
+                const blob = new Blob([content], { type: contentType || 'application/octet-stream' });
+                console.log('downloadFile: Blob created, size:', blob.size, 'type:', blob.type);
+                
+                // Try multiple download methods for better browser compatibility
+                
+                // Method 1: Object URL with anchor tag (most common)
+                try {
+                    const url = window.URL.createObjectURL(blob);
+                    console.log('downloadFile: Object URL created:', url);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.style.display = 'none';
+                    
+                    document.body.appendChild(a);
+                    console.log('downloadFile: Anchor element added to DOM, href:', a.href, 'download:', a.download);
+                    
+                    // Force the download with multiple approaches
+                    console.log('downloadFile: About to trigger click...');
+                    
+                    // Try click event
+                    a.click();
+                    console.log('downloadFile: Click triggered!');
+                    
+                    // Also try dispatching a click event
+                    const clickEvent = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    a.dispatchEvent(clickEvent);
+                    console.log('downloadFile: Click event dispatched!');
+                    
+                    // Clean up after a delay
+                    setTimeout(() => {
+                        try {
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                            console.log('downloadFile: Cleanup completed successfully');
+                        } catch (cleanupError) {
+                            console.error('downloadFile: Cleanup error:', cleanupError);
+                        }
+                    }, 1000); // Increased timeout to 1000ms
+                    
+                    console.log('downloadFile: Method 1 completed, returning success = true');
+                    return true;
+                    
+                } catch (method1Error) {
+                    console.error('downloadFile: Method 1 failed:', method1Error);
+                    
+                    // Method 2: Try using navigator.msSaveBlob for IE/Edge compatibility
+                    if (typeof navigator.msSaveBlob !== 'undefined') {
+                        console.log('downloadFile: Trying Method 2 (msSaveBlob)...');
+                        navigator.msSaveBlob(blob, filename);
+                        console.log('downloadFile: Method 2 completed successfully');
+                        return true;
+                    }
+                    
+                    // Method 3: Try using showSaveFilePicker API (modern browsers)
+                    if ('showSaveFilePicker' in window) {
+                        console.log('downloadFile: Trying Method 3 (showSaveFilePicker)...');
+                        window.showSaveFilePicker({
+                            suggestedName: filename,
+                            types: [{
+                                description: 'KML files',
+                                accept: { 'application/vnd.google-earth.kml+xml': ['.kml'] }
+                            }]
+                        }).then(fileHandle => {
+                            return fileHandle.createWritable();
+                        }).then(writable => {
+                            writable.write(blob);
+                            writable.close();
+                            console.log('downloadFile: Method 3 completed successfully');
+                        }).catch(method3Error => {
+                            console.error('downloadFile: Method 3 failed:', method3Error);
+                        });
+                        return true;
+                    }
+                    
+                    throw method1Error;
+                }
+                
+            } catch (error) {
+                console.error('Error in downloadFile:', error);
+                
+                // Last resort: show the content in a new window
+                try {
+                    console.log('downloadFile: Trying last resort method (new window)...');
+                    const newWindow = window.open();
+                    if (newWindow) {
+                        newWindow.document.write('<pre>' + content + '</pre>');
+                        newWindow.document.title = filename;
+                        console.log('downloadFile: Content displayed in new window');
+                        return true;
+                    }
+                } catch (lastResortError) {
+                    console.error('downloadFile: Last resort method failed:', lastResortError);
+                }
+                
+                return false;
+            }
+        };
+
+        // Log when the script loads
+        console.log('JavaScript functions loaded successfully');
+        console.log('Available functions:', { 
+            downloadFile: typeof window.downloadFile, 
+            testJavaScriptInterop: typeof window.testJavaScriptInterop 
+        });
+    </script>
+</body>
+
+</html>

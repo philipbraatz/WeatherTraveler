@@ -1,0 +1,347 @@
+@page "/preferences"
+@using WeatherTraveler.Web.Services
+@inject IWeatherTravelerService WeatherService
+
+<PageTitle>🎯 Travel Preferences - Weather Traveler</PageTitle>
+
+<div class="container-fluid main-container">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                🌤️ Weather Traveler
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">🏠 Home</a>
+                <a class="nav-link active" href="/preferences">⚙️ Preferences</a>
+                <a class="nav-link" href="/route-planner">🗺️ Route Planner</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 mb-4">🎯 Travel Preferences</h1>
+                <p class="lead mb-5">Customize your weather-aware travel planning experience</p>
+            </div>
+        </div>
+
+        @if (userProfile is null)
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading preferences...</span>
+                    </div>
+                    <p class="mt-2">Loading your travel preferences...</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <!-- User Profile Section -->
+                <div class="col-lg-6 mb-4">
+                    <div class="weather-card">
+                        <h4 class="mb-3">👤 User Profile</h4>
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Name:</label>
+                            <input type="text" class="form-control form-control-custom" id="userName" 
+                                   @bind="editProfile.Name" @bind:event="oninput" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">                                <p><strong>Member Since:</strong> @userProfile?.CreatedDate.ToString("MMM dd, yyyy")</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Last Updated:</strong> @userProfile?.LastUpdated.ToString("MMM dd, yyyy")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temperature Preferences -->
+                <div class="col-lg-6 mb-4">
+                    <div class="weather-card">
+                        <h4 class="mb-3">🌡️ Temperature Preferences</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="minTemp" class="form-label">Minimum Temperature (°C):</label>
+                                <input type="number" class="form-control form-control-custom" id="minTemp" 
+                                       @bind="editProfile.Preferences.TemperatureRange.MinCelsius" 
+                                       @bind:event="oninput" step="0.5" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="maxTemp" class="form-label">Maximum Temperature (°C):</label>
+                                <input type="number" class="form-control form-control-custom" id="maxTemp" 
+                                       @bind="editProfile.Preferences.TemperatureRange.MaxCelsius" 
+                                       @bind:event="oninput" step="0.5" />
+                            </div>
+                        </div>
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <p class="mb-0"><strong>Current Range:</strong> 
+                               @editProfile.Preferences.TemperatureRange.MinCelsius°C - 
+                               @editProfile.Preferences.TemperatureRange.MaxCelsius°C</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather Preferences -->
+                <div class="col-lg-6 mb-4">
+                    <div class="weather-card">
+                        <h4 class="mb-3">🌧️ Weather Preferences</h4>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="avoidRain" 
+                                   @bind="editProfile.Preferences.AvoidRain" />
+                            <label class="form-check-label" for="avoidRain">
+                                Avoid rainy conditions when possible
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fuelType" class="form-label">Preferred Fuel Type:</label>
+                            <select class="form-select form-control-custom" id="fuelType" 
+                                    @bind="selectedFuelType" @bind:event="onchange">
+                                <option value="Regular">Regular Gasoline</option>
+                                <option value="Plus">Plus/Mid-Grade</option>
+                                <option value="Premium">Premium Gasoline</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Electric">Electric</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Travel Timing -->
+                <div class="col-lg-6 mb-4">
+                    <div class="weather-card">
+                        <h4 class="mb-3">⏰ Travel Timing</h4>
+                        <div class="mb-3">
+                            <label for="maxDriving" class="form-label">Maximum Driving Hours per Day:</label>
+                            <input type="number" class="form-control form-control-custom" id="maxDriving" 
+                                   @bind="editProfile.Preferences.MaxDrivingHours" 
+                                   @bind:event="oninput" min="1" max="16" />
+                        </div>                        <div class="mb-3">
+                            <label for="departureTime" class="form-label">Preferred Departure Time (24-hour format):</label>
+                            <input type="text" class="form-control form-control-custom" id="departureTime" 
+                                   @bind="departureTimeString" @bind:event="oninput" 
+                                   placeholder="17:15" pattern="[0-9]{2}:[0-9]{2}" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Priority Weights -->
+                <div class="col-12 mb-4">
+                    <div class="weather-card">
+                        <h4 class="mb-3">⚖️ Planning Priorities</h4>
+                        <p class="text-muted mb-4">Adjust how much weight to give each factor when planning routes:</p>
+                        <div class="row">
+                            <div class="col-lg-4 mb-3">
+                                <label for="weatherWeight" class="form-label">Weather Importance: @weatherWeight.ToString("P0")</label>
+                                <input type="range" class="form-range" id="weatherWeight" 
+                                       @bind="weatherWeight" @bind:event="oninput" 
+                                       min="0" max="1" step="0.1" />
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <label for="costWeight" class="form-label">Cost Importance: @costWeight.ToString("P0")</label>
+                                <input type="range" class="form-range" id="costWeight" 
+                                       @bind="costWeight" @bind:event="oninput" 
+                                       min="0" max="1" step="0.1" />
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <label for="timeWeight" class="form-label">Time Importance: @timeWeight.ToString("P0")</label>
+                                <input type="range" class="form-range" id="timeWeight" 
+                                       @bind="timeWeight" @bind:event="oninput" 
+                                       min="0" max="1" step="0.1" />
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <strong>💡 Tip:</strong> The weights will be automatically normalized to sum to 100%.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="col-12 mb-4">
+                    <div class="weather-card">
+                        <h4 class="mb-3">🔔 Notification Settings</h4>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weatherAlerts" 
+                                           @bind="editProfile.Preferences.Notifications.WeatherAlerts" />
+                                    <label class="form-check-label" for="weatherAlerts">
+                                        Weather alerts and warnings
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="priceAlerts" 
+                                           @bind="editProfile.Preferences.Notifications.PriceAlerts" />
+                                    <label class="form-check-label" for="priceAlerts">
+                                        Gas price change alerts
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="routeUpdates" 
+                                           @bind="editProfile.Preferences.Notifications.RouteUpdates" />
+                                    <label class="form-check-label" for="routeUpdates">
+                                        Route optimization updates
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="col-12 text-center">
+                    <button class="btn btn-primary-custom btn-lg me-3" @onclick="SavePreferences" disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            <text>Saving...</text>
+                        }
+                        else
+                        {
+                            <text>💾 Save Preferences</text>
+                        }
+                    </button>
+                    <button class="btn btn-outline-secondary btn-lg me-3" @onclick="ResetPreferences">
+                        🔄 Reset to Defaults
+                    </button>
+                    <a href="/" class="btn btn-outline-primary btn-lg">
+                        🏠 Back to Home
+                    </a>
+                </div>
+
+                @if (!string.IsNullOrEmpty(saveMessage))
+                {
+                    <div class="col-12 mt-4">
+                        <div class="alert @(saveSuccess ? "alert-success" : "alert-danger") alert-dismissible fade show">
+                            @saveMessage
+                            <button type="button" class="btn-close" @onclick="ClearMessage"></button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private UserProfile? userProfile;
+    private UserProfile editProfile = new UserProfile("", DateTime.Now, DateTime.Now, GetDefaultPreferences());
+    private bool isSaving = false;
+    private string saveMessage = string.Empty;
+    private bool saveSuccess = false;
+    private string selectedFuelType = "Regular";
+    private string departureTimeString = "17:15";
+    private double weatherWeight = 0.4;
+    private double costWeight = 0.3;
+    private double timeWeight = 0.3;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUserProfile();
+    }
+
+    private async Task LoadUserProfile()
+    {
+        userProfile = await WeatherService.LoadUserProfileAsync();
+        if (userProfile is not null)
+        {
+            editProfile = CloneUserProfile(userProfile);
+            selectedFuelType = editProfile.Preferences.FuelType.ToString();
+            departureTimeString = editProfile.Preferences.PreferredDepartureTime.ToString(@"hh\:mm");
+            
+            // Extract priority weights (simplified for demo)
+            weatherWeight = 0.4; // Would normally extract from editProfile.Preferences.PriorityWeights
+            costWeight = 0.3;
+            timeWeight = 0.3;
+        }
+        StateHasChanged();
+    }
+
+    private async Task SavePreferences()
+    {
+        isSaving = true;
+        saveMessage = string.Empty;
+        
+        try
+        {            // Update fuel type
+            if (Enum.TryParse<FuelType>(selectedFuelType, out var fuelType))
+            {
+                editProfile.Preferences.FuelType = fuelType;
+                editProfile.Preferences.PreferredDepartureTime = TimeSpan.Parse(departureTimeString);
+                editProfile.LastUpdated = DateTime.Now;
+            }
+
+            await WeatherService.SaveUserProfileAsync(editProfile);
+            userProfile = editProfile;
+            
+            saveMessage = "✅ Preferences saved successfully!";
+            saveSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            saveMessage = $"❌ Error saving preferences: {ex.Message}";
+            saveSuccess = false;
+        }
+        finally
+        {
+            isSaving = false;
+            StateHasChanged();
+            
+            // Clear message after 3 seconds
+            await Task.Delay(3000);
+            ClearMessage();
+        }
+    }    private void ResetPreferences()
+    {
+        editProfile.Preferences = GetDefaultPreferences();
+        selectedFuelType = "Regular";
+        departureTimeString = "17:15";
+        weatherWeight = 0.4;
+        costWeight = 0.3;
+        timeWeight = 0.3;
+        StateHasChanged();
+    }
+
+    private void ClearMessage()
+    {
+        saveMessage = string.Empty;
+        StateHasChanged();
+    }    private static UserPreferences GetDefaultPreferences()
+    {
+        return new UserPreferences(
+            new TemperatureRange(12.0, 28.0),
+            false,
+            8,
+            new TimeSpan(17, 15, 0),
+            FuelType.Regular,
+            new NotificationSettings(true, false, true)
+        );
+    }
+
+    private static UserProfile CloneUserProfile(UserProfile original)
+    {
+        return new UserProfile(
+            original.Name,
+            original.CreatedDate,
+            original.LastUpdated,
+            original.Preferences
+        );
+    }    private void NormalizePriorityWeights()
+    {
+        var total = weatherWeight + costWeight + timeWeight;
+        if (total == 0) total = 1; // Avoid division by zero
+
+        // Normalize weights (simplified - in real app this would update the preference model)
+        weatherWeight = weatherWeight / total;
+        costWeight = costWeight / total;
+        timeWeight = timeWeight / total;
+    }
+}
