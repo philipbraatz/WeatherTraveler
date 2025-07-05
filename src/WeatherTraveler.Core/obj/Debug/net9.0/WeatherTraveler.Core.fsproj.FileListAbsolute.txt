@@ -11,3 +11,4 @@ C:\Users\_\Repos\pb\WeatherTraveler\src\WeatherTraveler.Core\obj\Debug\net9.0\re
 C:\Users\_\Repos\pb\WeatherTraveler\src\WeatherTraveler.Core\obj\Debug\net9.0\WeatherTraveler.Core.xml
 C:\Users\_\Repos\pb\WeatherTraveler\src\WeatherTraveler.Core\obj\Debug\net9.0\WeatherTraveler.Core.pdb
 C:\Users\_\Repos\pb\WeatherTraveler\src\WeatherTraveler.Core\obj\Debug\net9.0\ref\WeatherTraveler.Core.dll
+C:\Users\_\Repos\pb\WeatherTraveler\src\WeatherTraveler.Core\obj\Debug\net9.0\WeatherTraveler.Core.sourcelink.json
