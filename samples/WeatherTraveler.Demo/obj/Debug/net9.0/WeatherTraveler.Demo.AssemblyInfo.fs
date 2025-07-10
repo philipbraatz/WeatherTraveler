@@ -10,7 +10,7 @@ open System.Reflection
 [<assembly: System.Reflection.AssemblyCompanyAttribute("WeatherTraveler.Demo")>]
 [<assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")>]
 [<assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")>]
-[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")>]
+[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b4d9f23d17d41fea2ee6bb054e8acd1f9e5a032")>]
 [<assembly: System.Reflection.AssemblyProductAttribute("WeatherTraveler.Demo")>]
 [<assembly: System.Reflection.AssemblyTitleAttribute("WeatherTraveler.Demo")>]
 [<assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")>]

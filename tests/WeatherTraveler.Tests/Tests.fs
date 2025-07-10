@@ -5,5 +5,11 @@ open Xunit
 
 module BasicTests =
     [<Fact>]
-    let ``My test`` () =
+    let ``Basic test passes`` () =
         Assert.True(true)
+        
+    [<Fact>]
+    let ``Temperature range test`` () =
+        let minTemp = 15.0
+        let maxTemp = 25.0
+        Assert.True(minTemp < maxTemp)

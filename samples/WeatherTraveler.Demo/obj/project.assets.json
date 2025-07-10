@@ -453,11 +453,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\_\\Repos\\pb\\WeatherTraveler\\samples\\WeatherTraveler.Demo\\WeatherTraveler.Demo.fsproj",
+      "projectUniqueName": "c:\\Users\\_\\Repos\\pb\\WeatherTraveler\\samples\\WeatherTraveler.Demo\\WeatherTraveler.Demo.fsproj",
       "projectName": "WeatherTraveler.Demo",
-      "projectPath": "C:\\Users\\_\\Repos\\pb\\WeatherTraveler\\samples\\WeatherTraveler.Demo\\WeatherTraveler.Demo.fsproj",
+      "projectPath": "c:\\Users\\_\\Repos\\pb\\WeatherTraveler\\samples\\WeatherTraveler.Demo\\WeatherTraveler.Demo.fsproj",
       "packagesPath": "C:\\Users\\_\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\_\\Repos\\pb\\WeatherTraveler\\samples\\WeatherTraveler.Demo\\obj\\",
+      "outputPath": "c:\\Users\\_\\Repos\\pb\\WeatherTraveler\\samples\\WeatherTraveler.Demo\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\_\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -473,8 +473,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\_\\Repos\\pb\\WeatherTraveler\\src\\WeatherTraveler.Core\\WeatherTraveler.Core.fsproj": {
-              "projectPath": "C:\\Users\\_\\Repos\\pb\\WeatherTraveler\\src\\WeatherTraveler.Core\\WeatherTraveler.Core.fsproj"
+            "c:\\Users\\_\\Repos\\pb\\WeatherTraveler\\src\\WeatherTraveler.Core\\WeatherTraveler.Core.fsproj": {
+              "projectPath": "c:\\Users\\_\\Repos\\pb\\WeatherTraveler\\src\\WeatherTraveler.Core\\WeatherTraveler.Core.fsproj"
             }
           }
         }

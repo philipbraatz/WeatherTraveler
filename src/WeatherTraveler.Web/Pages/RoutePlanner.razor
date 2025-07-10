@@ -1,603 +1,182 @@
 @page "/route-planner"
 @using WeatherTraveler.Web.Services
 @inject IWeatherTravelerService WeatherService
-@inject IJSRuntime JSRuntime
-@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
 
-<PageTitle>🗺️ Route Planner - Weather Traveler</PageTitle>
+<PageTitle>Route Planner - Weather Traveler</PageTitle>
 
-<div class="container-fluid main-container">
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                🌤️ Weather Traveler
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/">🏠 Home</a>
-                <a class="nav-link" href="/preferences">⚙️ Preferences</a>
-                <a class="nav-link active" href="/route-planner">🗺️ Route Planner</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="display-5 mb-4">🗺️ Weather-Aware Route Planner</h1>
-                <p class="lead mb-5">Plan your perfect journey with real-time weather insights</p>
-            </div>
-        </div>
-
-        <!-- Route Planning Form -->
-        <div class="row mb-5">
-            <div class="col-lg-8">
-                <div class="weather-card">
-                    <h4 class="mb-4">📍 Plan Your Route</h4>
-                    
-                    <!-- Waypoints -->
-                    <div class="mb-4">
-                        <h5>Waypoints</h5>
-                        @for (int i = 0; i < waypoints.Count; i++)
-                        {
-                            int index = i; // Capture for lambda
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-md-5">
-                                    <label class="form-label">@GetWaypointLabel(index):</label>
-                                    <input type="text" class="form-control form-control-custom" 
-                                           placeholder="Enter city name or coordinates"
-                                           @bind="waypoints[index].Name" @bind:event="oninput" />
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Latitude:</label>
-                                    <input type="number" class="form-control form-control-custom" 
-                                           step="0.0001" placeholder="39.7392"
-                                           @bind="waypoints[index].Latitude" @bind:event="oninput" />
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Longitude:</label>
-                                    <input type="number" class="form-control form-control-custom" 
-                                           step="0.0001" placeholder="-104.9903"
-                                           @bind="waypoints[index].Longitude" @bind:event="oninput" />
-                                </div>
-                                <div class="col-md-1">
-                                    @if (waypoints.Count > 2)
-                                    {
-                                        <button type="button" class="btn btn-outline-danger btn-sm mt-4" 
-                                                @onclick="() => RemoveWaypoint(index)">
-                                            🗑️
-                                        </button>
-                                    }
-                                </div>
-                            </div>
-                        }
-                        
-                        <button type="button" class="btn btn-outline-primary" @onclick="AddWaypoint">
-                            ➕ Add Waypoint
-                        </button>
-                    </div>
-
-                    <!-- Route Options -->
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h5>🌡️ Temperature Preferences</h5>
-                            <div class="row">
-                                <div class="col-6">
-                                    <label class="form-label">Min Temp (°C):</label>
-                                    <input type="number" class="form-control form-control-custom" 
-                                           @bind="temperatureRange.MinCelsius" @bind:event="oninput" step="0.5" />
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">Max Temp (°C):</label>
-                                    <input type="number" class="form-control form-control-custom" 
-                                           @bind="temperatureRange.MaxCelsius" @bind:event="oninput" step="0.5" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>🌧️ Weather Options</h5>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" id="avoidRain" @bind="avoidRain" />
-                                <label class="form-check-label" for="avoidRain">
-                                    Avoid rainy conditions
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="showForecast" @bind="showForecast" />
-                                <label class="form-check-label" for="showForecast">
-                                    Show extended forecast
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="text-center">
-                        <button class="btn btn-primary-custom btn-lg me-3" @onclick="PlanRoute" disabled="@isPlanning">
-                            @if (isPlanning)
-                            {
-                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                <text>Planning Route...</text>
-                            }
-                            else
-                            {
-                                <text>🎯 Plan Route</text>
-                            }
-                        </button>
-                        <button class="btn btn-outline-secondary" @onclick="LoadSampleRoute">
-                            📋 Load Sample Route
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Cities Selector -->
-            <div class="col-lg-4">
-                <div class="weather-card">
-                    <h5 class="mb-3">🏙️ Quick City Selection</h5>
-                    <p class="text-muted mb-3">Click to add major US cities to your route:</p>
-                    
-                    @if (majorCities.Any())
-                    {
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2 class="mb-4">🗺️ Plan Your Route</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="@routeRequest" OnValidSubmit="@PlanRoute">
                         <div class="row">
-                            @foreach (var city in majorCities.Take(12))
-                            {
-                                <div class="col-6 mb-2">
-                                    <button class="btn btn-outline-primary btn-sm w-100" 
-                                            @onclick="() => AddCityToRoute(city)">
-                                        @city.Name
-                                    </button>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Origin</label>
+                                    <InputText @bind-Value="routeRequest.Origin.Name" class="form-control" placeholder="Enter starting location" />
                                 </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading cities...</span>
                             </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <!-- Route Results -->
-        @if (routeResults.Any())
-        {
-            <div class="row">
-                <div class="col-12">
-                    <h3 class="mb-4">🎯 Route Analysis Results</h3>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Route Summary -->
-                <div class="col-lg-4 mb-4">
-                    <div class="route-card">
-                        <h5>📊 Route Summary</h5>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Total Distance:</span>
-                                <span class="distance-badge">@totalDistance.ToString("F0") km</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Waypoints:</span>
-                                <span class="fw-bold">@waypoints.Count</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Optimal Weather:</span>
-                                <span class="status-optimal">@optimalLocations locations</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Est. Travel Time:</span>
-                                <span class="fw-bold">@estimatedTravelTime</span>
-                            </div>
-                        </div>
-                          <div class="mt-4">
-                            <button class="btn btn-primary-custom w-100 mb-2" @onclick="ExportRoute" disabled="@isExporting">
-                                @if (isExporting)
-                                {
-                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                    <text>Exporting...</text>
-                                }
-                                else
-                                {
-                                    <text>📁 Export to Google Earth</text>
-                                }
-                            </button>                            @if (!string.IsNullOrEmpty(exportMessage))
-                            {
-                                <div class="alert @(exportSuccess ? "alert-success" : "alert-danger") alert-dismissible fade show" role="alert">
-                                    @exportMessage
-                                    <button type="button" class="btn-close" @onclick="ClearExportMessage"></button>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Destination</label>
+                                    <InputText @bind-Value="routeRequest.Destination.Name" class="form-control" placeholder="Enter destination" />
                                 </div>
-                            }
-                            <button class="btn btn-outline-secondary w-100 mb-2" @onclick="TestJavaScriptInterop">
-                                🧪 Test JavaScript Download
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Departure Date</label>
+                                    <InputDate @bind-Value="departureDate" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Departure Time</label>
+                                    <InputText @bind-Value="departureTimeString" class="form-control" type="time" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Min Temperature (°C)</label>
+                                    <InputNumber @bind-Value="routeRequest.TemperatureRange.MinTemperature" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Max Temperature (°C)</label>
+                                    <InputNumber @bind-Value="routeRequest.TemperatureRange.MaxTemperature" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary" disabled="@isPlanning">
+                                @if (isPlanning)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                🎯 Plan Route
                             </button>
-                            <button class="btn btn-outline-primary w-100" @onclick="ShareRoute">
-                                🔗 Share Route
+                            <button type="button" class="btn btn-secondary ms-2" @onclick="GoHome">
+                                🏠 Back to Home
                             </button>
                         </div>
-                    </div>
+                    </EditForm>
                 </div>
+            </div>
 
-                <!-- Weather Details -->
-                <div class="col-lg-8">
-                    <div class="row">
-                        @for (int i = 0; i < routeResults.Count; i++)
+            @if (routeResult != null)
+            {
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Route Results</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Total Distance:</strong> @routeResult.TotalDistance.ToString("F1") km</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Estimated Duration:</strong> @routeResult.EstimatedDuration.ToString(@"h\h\ m\m")</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Status:</strong> @routeResult.Status</p>
+                            </div>
+                        </div>
+                        
+                        @if (routeResult.Segments.Any())
                         {
-                            var result = routeResults[i];
-                            <div class="col-md-6 mb-4">
-                                <div class="weather-card">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h6>@GetWaypointLabel(i): @waypoints[i].Name</h6>
-                                        <span class="badge @GetWeatherStatusBadge(result)">
-                                            @GetWeatherStatus(result)
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="weather-icon-large me-3">@GetWeatherIcon(result.Condition)</div>
-                                        <div>
-                                            <div class="temperature">@result.Temperature.ToString("F1")°C</div>
-                                            <div class="weather-condition">@result.Condition</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="small text-muted">
-                                        <div class="d-flex justify-content-between">
-                                            <span>💨 Wind:</span>
-                                            <span>@result.WindSpeed.ToString("F1") km/h</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span>💧 Humidity:</span>
-                                            <span>@result.Humidity%</span>
-                                        </div>
-                                        @if (i < waypoints.Count - 1)
+                            <h6 class="mt-3">Route Segments</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Distance</th>
+                                            <th>Duration</th>
+                                            <th>Weather</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var segment in routeResult.Segments)
                                         {
-                                            <div class="d-flex justify-content-between mt-2 fw-bold">
-                                                <span>📏 Next Segment:</span>
-                                                <span>@segmentDistances[i].ToString("F0") km</span>
-                                            </div>
+                                            <tr>
+                                                <td>@segment.From.Name</td>
+                                                <td>@segment.To.Name</td>
+                                                <td>@segment.Distance.ToString("F1") km</td>
+                                                <td>@segment.Duration.ToString(@"h\h\ m\m")</td>
+                                                <td>@segment.Weather.Temperature.ToString("F1")°C, @segment.Weather.Condition</td>
+                                            </tr>
                                         }
-                                    </div>
-                                </div>
+                                    </tbody>
+                                </table>
                             </div>
                         }
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
 </div>
 
 @code {
-    private List<WaypointInput> waypoints = new()
+    private RouteRequest routeRequest = new()
     {
-        new WaypointInput { Name = "Denver, CO", Latitude = 39.7392, Longitude = -104.9903 },
-        new WaypointInput { Name = "Las Vegas, NV", Latitude = 36.1699, Longitude = -115.1398 }
+        Origin = new Location(),
+        Destination = new Location(),
+        DepartureTime = DateTime.Today.AddDays(1),
+        TemperatureRange = new TemperatureRange { MinTemperature = 15, MaxTemperature = 25 }
     };
 
-    private TemperatureRange temperatureRange = new(12.0, 28.0);    private bool avoidRain = false;
-    private bool showForecast = false;
-    private bool isPlanning = false;
-    private bool isExporting = false;
-
-    private List<WeatherInfo> routeResults = new();
-    private List<CityInfo> majorCities = new();
-    private double totalDistance = 0;
-    private int optimalLocations = 0;
-    private string estimatedTravelTime = "0h 0m";
-    private List<double> segmentDistances = new();
-    
-    private string exportMessage = string.Empty;
-    private bool exportSuccess = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadMajorCities();
-    }
-
-    private async Task LoadMajorCities()
-    {
-        var coordinates = await WeatherService.GetMajorCitiesAsync();
-        var cityNames = new[]
-        {
-            "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia",
-            "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville"
-        };
-
-        majorCities = coordinates.Take(cityNames.Length)
-            .Select((coord, index) => new CityInfo 
-            { 
-                Name = cityNames[index], 
-                Coordinate = coord 
-            })
-            .ToList();
-
-        StateHasChanged();
-    }
+    private DateTime departureDate = DateTime.Today.AddDays(1);
+    private string departureTimeString = "09:00";
+    private RouteResult? routeResult;
+    private bool isPlanning;
 
     private async Task PlanRoute()
     {
         isPlanning = true;
-        routeResults.Clear();
-        segmentDistances.Clear();
-        totalDistance = 0;
-        optimalLocations = 0;
-
+        
         try
         {
-            var coordinates = waypoints.Select(w => new Coordinate(w.Latitude, w.Longitude)).ToList();
-            
-            // Get weather for each waypoint
-            routeResults = await WeatherService.PlanRouteAsync(coordinates, temperatureRange);
-            
-            // Calculate distances
-            for (int i = 0; i < coordinates.Count - 1; i++)
+            // Combine date and time
+            if (TimeSpan.TryParse(departureTimeString, out var time))
             {
-                var distance = await WeatherService.CalculateDistanceAsync(coordinates[i], coordinates[i + 1]);
-                segmentDistances.Add(distance);
-                totalDistance += distance;
+                routeRequest.DepartureTime = departureDate.Date.Add(time);
+            }
+            else
+            {
+                routeRequest.DepartureTime = departureDate;
             }
 
-            // Analyze optimal locations
-            optimalLocations = routeResults.Count(r => 
-                r.Temperature >= temperatureRange.MinCelsius && 
-                r.Temperature <= temperatureRange.MaxCelsius &&
-                (!avoidRain || r.Condition != WeatherCondition.Rainy));
+            // Set some sample coordinates for now
+            routeRequest.Origin.Latitude = 47.6062;
+            routeRequest.Origin.Longitude = -122.3321;
+            routeRequest.Destination.Latitude = 45.5152;
+            routeRequest.Destination.Longitude = -122.6784;
 
-            // Estimate travel time (rough calculation)
-            var hours = (int)(totalDistance / 80); // Assuming 80 km/h average
-            var minutes = (int)((totalDistance / 80 - hours) * 60);
-            estimatedTravelTime = $"{hours}h {minutes}m";
+            routeResult = await WeatherService.PlanRouteAsync(routeRequest);
         }
         catch (Exception ex)
         {
-            // Handle error
             Console.WriteLine($"Error planning route: {ex.Message}");
         }
         finally
         {
             isPlanning = false;
-            StateHasChanged();
         }
     }
 
-    private void AddWaypoint()
+    private void GoHome()
     {
-        waypoints.Add(new WaypointInput { Name = "", Latitude = 0, Longitude = 0 });
-    }
-
-    private void RemoveWaypoint(int index)
-    {
-        if (waypoints.Count > 2)
-        {
-            waypoints.RemoveAt(index);
-        }
-    }
-
-    private void AddCityToRoute(CityInfo city)
-    {
-        waypoints.Add(new WaypointInput 
-        { 
-            Name = city.Name, 
-            Latitude = city.Coordinate.Latitude, 
-            Longitude = city.Coordinate.Longitude 
-        });
-    }
-
-    private void LoadSampleRoute()
-    {
-        waypoints.Clear();
-        waypoints.AddRange(new[]
-        {
-            new WaypointInput { Name = "Denver, CO", Latitude = 39.7392, Longitude = -104.9903 },
-            new WaypointInput { Name = "Las Vegas, NV", Latitude = 36.1699, Longitude = -115.1398 },
-            new WaypointInput { Name = "Los Angeles, CA", Latitude = 34.0522, Longitude = -118.2437 }
-        });
-    }    private async Task ExportRoute()
-    {
-        isExporting = true;
-        exportMessage = string.Empty;
-        
-        try
-        {
-            Console.WriteLine("ExportRoute method called");
-            
-            var coordinates = waypoints.Select(w => new Coordinate(w.Latitude, w.Longitude)).ToList();
-            Console.WriteLine($"Generated {coordinates.Count} coordinates");
-            
-            if (!coordinates.Any())
-            {
-                exportMessage = "❌ No waypoints to export. Please add some waypoints first.";
-                exportSuccess = false;
-                return;
-            }
-            
-            var kml = await WeatherService.ExportRouteToKmlAsync(coordinates);
-            Console.WriteLine($"KML generated, length: {kml?.Length ?? 0}");
-            
-            if (!string.IsNullOrEmpty(kml))
-            {
-                // Use the existing downloadFile JavaScript function
-                var fileName = $"weather-traveler-route-{DateTime.Now:yyyy-MM-dd-HHmm}.kml";
-                Console.WriteLine($"Attempting to download file: {fileName}");
-                
-                try
-                {
-                    Console.WriteLine($"About to call JSRuntime.InvokeAsync for downloadFile");
-                    Console.WriteLine($"JSRuntime type: {JSRuntime?.GetType()?.Name}");
-                    Console.WriteLine($"KML preview: {kml.Substring(0, Math.Min(200, kml.Length))}...");
-                    
-                    if (JSRuntime == null)
-                    {
-                        throw new InvalidOperationException("JSRuntime is not available");
-                    }
-                    
-                    // Call downloadFile directly without timeout first
-                    var success = await JSRuntime.InvokeAsync<bool>("downloadFile", fileName, kml, "application/vnd.google-earth.kml+xml");
-                    Console.WriteLine($"JavaScript call completed for {fileName}, success: {success}");
-                    
-                    if (success)
-                    {
-                        exportMessage = $"✅ Route exported successfully as {fileName}";
-                        exportSuccess = true;
-                    }
-                    else
-                    {
-                        exportMessage = "❌ Download failed. Please check browser console for details.";
-                        exportSuccess = false;
-                    }
-                }
-                catch (Exception jsEx)
-                {
-                    Console.WriteLine($"JavaScript interop error: {jsEx.Message}");
-                    Console.WriteLine($"JavaScript interop stack trace: {jsEx.StackTrace}");
-                    exportMessage = $"❌ Download error: {jsEx.Message}";
-                    exportSuccess = false;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Failed to generate KML export - KML is null or empty");
-                exportMessage = "❌ Failed to generate KML export. Please try again.";
-                exportSuccess = false;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error exporting route: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
-            exportMessage = $"❌ Error exporting route: {ex.Message}";
-            exportSuccess = false;
-        }
-        finally
-        {
-            isExporting = false;
-            StateHasChanged();
-            
-            // Clear message after 5 seconds
-            _ = Task.Delay(5000).ContinueWith(_ => ClearExportMessage());
-        }
-    }private void ClearExportMessage()
-    {
-        exportMessage = string.Empty;
-        StateHasChanged();
-    }
-
-    private async Task TestJavaScriptInterop()
-    {
-        try
-        {
-            Console.WriteLine("=== Testing JavaScript Interop ===");
-            
-            // Test 1: Basic interop test
-            var testResult = await JSRuntime.InvokeAsync<string>("testJavaScriptInterop");
-            Console.WriteLine($"Test 1 - Basic interop: {testResult}");
-            
-            // Test 2: Simple download test
-            var testKml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<kml xmlns=""http://www.opengis.net/kml/2.2"">
-  <Document>
-    <name>Test Route</name>
-    <Placemark>
-      <name>Test Location</name>
-      <Point>
-        <coordinates>-104.990300,39.739200,0</coordinates>
-      </Point>
-    </Placemark>
-  </Document>
-</kml>";
-            
-            Console.WriteLine($"Test 2 - About to test download with {testKml.Length} character KML");
-            var downloadResult = await JSRuntime.InvokeAsync<bool>("downloadFile", "test-interop.kml", testKml, "application/vnd.google-earth.kml+xml");
-            Console.WriteLine($"Test 2 - Download result: {downloadResult}");
-            
-            exportMessage = $"✅ JavaScript interop test completed. Check console for details.";
-            exportSuccess = true;
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"JavaScript interop test failed: {ex.Message}");
-            exportMessage = $"❌ JavaScript interop test failed: {ex.Message}";
-            exportSuccess = false;
-            StateHasChanged();
-        }
-    }
-
-    private async Task ShareRoute()
-    {
-        try
-        {
-            // Simple implementation - copy route URL to clipboard
-            var routeUrl = $"{NavigationManager.BaseUri}route-planner";
-            await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", routeUrl);
-            Console.WriteLine("Route URL copied to clipboard");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error sharing route: {ex.Message}");
-        }
-    }
-
-    private string GetWaypointLabel(int index)
-    {
-        return index switch
-        {
-            0 => "🚀 Start",
-            _ when index == waypoints.Count - 1 => "🏁 End",
-            _ => $"📍 Stop {index}"
-        };
-    }
-
-    private string GetWeatherIcon(WeatherCondition condition)
-    {
-        return condition switch
-        {
-            WeatherCondition.Sunny => "☀️",
-            WeatherCondition.PartlyCloudy => "⛅",
-            WeatherCondition.Cloudy => "☁️",
-            WeatherCondition.Rainy => "🌧️",
-            WeatherCondition.Stormy => "⛈️",
-            WeatherCondition.Snowy => "❄️",
-            WeatherCondition.Foggy => "🌫️",
-            _ => "🌤️"
-        };
-    }
-
-    private string GetWeatherStatusBadge(WeatherInfo weather)
-    {
-        if (weather.Temperature >= temperatureRange.MinCelsius && weather.Temperature <= temperatureRange.MaxCelsius)
-        {
-            if (avoidRain && weather.Condition == WeatherCondition.Rainy)
-                return "bg-warning";
-            return "bg-success";
-        }
-        return "bg-danger";
-    }
-
-    private string GetWeatherStatus(WeatherInfo weather)
-    {
-        if (weather.Temperature >= temperatureRange.MinCelsius && weather.Temperature <= temperatureRange.MaxCelsius)
-        {
-            if (avoidRain && weather.Condition == WeatherCondition.Rainy)
-                return "Rainy";
-            return "Optimal";
-        }
-        return "Outside Range";
-    }
-
-    public class WaypointInput
-    {
-        public string Name { get; set; } = string.Empty;
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-    }    public class CityInfo
-    {
-        public string Name { get; set; } = string.Empty;
-        public required Coordinate Coordinate { get; set; }
+        Navigation.NavigateTo("/");
     }
 }

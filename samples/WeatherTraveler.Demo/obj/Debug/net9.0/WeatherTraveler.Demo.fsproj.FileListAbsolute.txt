@@ -1,7 +1,3 @@
-C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.fsproj.AssemblyReference.cache
-C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.AssemblyInfoInputs.cache
-C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.AssemblyInfo.fs
-C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.fsproj.CoreCompileInputs.cache
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\bin\Debug\net9.0\WeatherTraveler.Demo.exe
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\bin\Debug\net9.0\WeatherTraveler.Demo.deps.json
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\bin\Debug\net9.0\WeatherTraveler.Demo.runtimeconfig.json
@@ -33,6 +29,11 @@ C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\bin\Debug\net9.
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\bin\Debug\net9.0\WeatherTraveler.Core.dll
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\bin\Debug\net9.0\WeatherTraveler.Core.pdb
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\bin\Debug\net9.0\WeatherTraveler.Core.xml
+C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.fsproj.AssemblyReference.cache
+C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.AssemblyInfoInputs.cache
+C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.AssemblyInfo.fs
+C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.fsproj.CoreCompileInputs.cache
+C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.sourcelink.json
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherT.27F180DE.Up2Date
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\WeatherTraveler.Demo.dll
 C:\Users\_\Repos\pb\WeatherTraveler\samples\WeatherTraveler.Demo\obj\Debug\net9.0\refint\WeatherTraveler.Demo.dll
